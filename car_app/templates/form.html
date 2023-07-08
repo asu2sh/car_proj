@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+  <form id="multi-step-form" action='/form/' method="post">
+    {% csrf_token %}
+    {{ customer_form.as_p }}
+    <button id="next-btn" type="button">Next</button>
+    <div id="car-fields" style="display: none;">
+      {{ car_form.as_p }}
+      <button type="submit">Submit</button>
+    </div>
+  </form>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    $(document).ready(function() {
+
+      var customerForm = $('#customer_form');
+      var carFields = $('#car-fields');
+
+      $('#next-btn').click(function(event) {
+        var email = $('#id_email');
+        var firstName = $('#id_first_name');
+        var lastName = $('#id_last_name');
+        var city = $('#id_city');
+        var state = $('#id_state');
+        var pincode =  $('#id_pincode');
+        var countryCode = $('#id_country_code');
+        var phone = $('#id_phone');
+
+        if (!isValidAlphabet(firstName.val())){
+          alert('Enter a Valid First Name')
+        }
+        else if (!isValidAlphabet(lastName.val())){
+          alert('Enter a Valid Last Name')     
+        }
+        else if (!isValidNumber(pincode.val())){
+          alert('Enter a Valid Pincode Number')        
+        }
+        else if (!isValidAlphabet(city.val())){
+          alert('Enter a Valid City Name')         
+        }
+        else if (!isValidAlphabet(state.val())){
+          alert('Enter a Valid State Name')         
+        }
+        else if (!isValidNumber(countryCode.val())){
+          alert('Enter a Valid Country Code Number')        
+        }
+        else if (!isValidNumber(phone.val())){
+          alert('Enter a Valid Phone Number')      
+        }
+        else if (!isValidEmail(email.val())) {
+          alert('Enter a Valid Email Address')
+        }
+        else {
+          customerForm.hide();
+          carFields.show();
+        }
+      });
+
+      function isValidEmail(email) {
+        var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+      }
+
+      function isValidAlphabet(input) {
+        return /^[a-zA-Z]+$/.test(input);
+      }
+
+      function isValidNumber(input) {
+        return /^\d+$/.test(input);
+      }
+
+    });
+  </script>
+
+{% endblock %}
