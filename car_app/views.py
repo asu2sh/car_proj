@@ -2,6 +2,11 @@ from django.shortcuts import render
 from .forms import CustomerForm, CarForm
 from .models import Customer, Car, Address
 
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from .serializers import AddressSerializer, CustomerSerializer, CarSerializer
+
+
 def multi_step_form(request):
     if request.method == 'POST':
         customer_form = CustomerForm(request.POST)
@@ -46,3 +51,47 @@ def multi_step_form(request):
         car_form = CarForm()
 
     return render(request, 'form.html', {'customer_form': customer_form, 'car_form': car_form})
+
+
+class AddressCreateView(APIView):
+    def post(self, request):
+        serializer = AddressSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=201)
+        return Response(serializer.errors, status=400)
+
+class CustomerCreateView(APIView):
+    def post(self, request):
+        serializer = CustomerSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=201)
+        return Response(serializer.errors, status=400)
+
+class CarCreateView(APIView):
+    def post(self, request):
+        serializer = CarSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=201)
+        return Response(serializer.errors, status=400)
+    
+
+class AllDataView(APIView):
+    def get(self, request):
+        addresses = Address.objects.all()
+        customers = Customer.objects.all()
+        cars = Car.objects.all()
+
+        address_serializer = AddressSerializer(addresses, many=True)
+        customer_serializer = CustomerSerializer(customers, many=True)
+        car_serializer = CarSerializer(cars, many=True)
+
+        data = {
+            'addresses': address_serializer.data,
+            'customers': customer_serializer.data,
+            'cars': car_serializer.data
+        }
+
+        return Response(data)

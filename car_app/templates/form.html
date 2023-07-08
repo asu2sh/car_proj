@@ -4,10 +4,13 @@
 
   <form id="multi-step-form" action='/form/' method="post">
     {% csrf_token %}
-    {{ customer_form.as_p }}
-    <button id="next-btn" type="button">Next</button>
+    <div id="customer-fields">
+      {{ customer_form.as_p }}
+      <button id="next-btn" type="button">Next</button>
+    </div>
     <div id="car-fields" style="display: none;">
       {{ car_form.as_p }}
+      <button id= "back-btn" type="button">Go Back</button>
       <button type="submit">Submit</button>
     </div>
   </form>
@@ -16,8 +19,13 @@
   <script>
     $(document).ready(function() {
 
-      var customerForm = $('#customer_form');
       var carFields = $('#car-fields');
+      var customerFields = $('#customer-fields');
+
+      $('#back-btn').click(function(event) {
+        customerFields.show();
+        carFields.hide();
+      })
 
       $('#next-btn').click(function(event) {
         var email = $('#id_email');
@@ -54,7 +62,7 @@
           alert('Enter a Valid Email Address')
         }
         else {
-          customerForm.hide();
+          customerFields.hide();
           carFields.show();
         }
       });
@@ -65,7 +73,7 @@
       }
 
       function isValidAlphabet(input) {
-        return /^[a-zA-Z]+$/.test(input);
+        return /^[A-Za-z\s]+$/.test(input);
       }
 
       function isValidNumber(input) {
